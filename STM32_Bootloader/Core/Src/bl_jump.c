@@ -5,6 +5,9 @@
  *      Author: Rubin Khadka
  */
 
+#include "main.h"
+#include "flash_layout.h"
+
 typedef void (*pFunction)(void);
 
 void JumpToApplication(void)
