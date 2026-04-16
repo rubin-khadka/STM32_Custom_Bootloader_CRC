@@ -41,12 +41,12 @@ uint8_t DS3231_Init(void)
   if(is_first_boot)
   {
     // Set initial time (only on first power-up or after battery failure)
-    current_time.seconds = 0;
-    current_time.minutes = 39;
-    current_time.hour = 21;
+    current_time.seconds = 00;
+    current_time.minutes = 00;
+    current_time.hour = 22;
     current_time.dayofweek = 5;
-    current_time.dayofmonth = 6;
-    current_time.month = 3;
+    current_time.dayofmonth = 17;
+    current_time.month = 04;
     current_time.year = 26;  // 2026
 
     DS3231_SetTime(&current_time);

@@ -94,8 +94,6 @@ uint8_t MPU6050_Init(void)
     return I2C_ERROR;
   }
 
-  USART1_SendString("MPU6050 initialized successfully!\r\n");
-
   TIMER2_Delay_ms(10);
 
   return I2C_OK;

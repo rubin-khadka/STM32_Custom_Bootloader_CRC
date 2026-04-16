@@ -14,6 +14,10 @@
 #include "dht11.h"
 #include "i2c2.h"
 #include "lcd.h"
+#include "button.h"
+#include "ds3231.h"
+#include "mpu6050.h"
+#include "tasks.h"
 #include <stdint.h>
 
 #define DHT11_READ_TICKS      100
@@ -29,15 +33,36 @@ int main(void)
   // Initialize all the peripherals
   DWT_Init();
   TIMER2_Init();
+  TIMER4_Init();
   USART1_Init();
   I2C2_Init();
   LCD_Init();
+
+  USART1_SendString("Jumped Inside Application\r\n");
+
+  // Welcome Message
+  USART1_SendString("============================\r\n");
+  USART1_SendString("STM32 Project Initialization\r\n");
+  USART1_SendString("============================\r\n");
+
+  LCD_Clear();
+  LCD_SendString("STM32 PROJECT");
+  LCD_SetCursor(1, 0);
+  LCD_SendString("INITIALIZING...");
+
+  // Initialize sensors
+  DS3231_Init();
+  MPU6050_Init();
   DHT11_Init();
 
   // Loop counters
   uint16_t dht_count = 0;
   uint16_t lcd_count = 0;
   uint16_t mpu_count = 0;
+
+  Button_Init();
+
+  TIMER2_Delay_ms(2000);
 
   TIMER3_SetupPeriod(10);  // 10ms period
 
@@ -48,22 +73,22 @@ int main(void)
     // Read DHT11 every 1 seconds
     if(dht_count++ >= DHT11_READ_TICKS)
     {
-      Task_DHT11_Read();
       dht_count = 0;
+      Task_DHT11_Read();
     }
 
     // Read MPU6050 every 50ms
     if(mpu_count++ >= MPU_READ_TICKS)
     {
-      Task_MPU6050_Read();
       mpu_count = 0;
+      Task_MPU6050_Read();
     }
 
     // Update LCD every 100ms
     if(lcd_count++ >= LCD_UPDATE_TICKS)
     {
-      Task_LCD_Update();
       lcd_count = 0;
+      Task_LCD_Update();
     }
 
     TIMER3_WaitPeriod(); // Heart Beat time check
