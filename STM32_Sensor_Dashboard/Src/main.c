@@ -7,7 +7,18 @@
 
 #include "stm32f103xb.h"
 #include "flash_layout.h"
+#include "dwt.h"
+#include "timer2.h"
+#include "timer3.h"
+#include "usart1.h"
+#include "dht11.h"
+#include "i2c2.h"
+#include "lcd.h"
 #include <stdint.h>
+
+#define DHT11_READ_TICKS      100
+#define MPU_READ_TICKS        5
+#define LCD_UPDATE_TICKS      10
 
 int main(void)
 {
@@ -15,8 +26,46 @@ int main(void)
   SCB->VTOR = APP_START_ADDR;
   __enable_irq();
 
+  // Initialize all the peripherals
+  DWT_Init();
+  TIMER2_Init();
+  USART1_Init();
+  I2C2_Init();
+  LCD_Init();
+  DHT11_Init();
+
+  // Loop counters
+  uint16_t dht_count = 0;
+  uint16_t lcd_count = 0;
+  uint16_t mpu_count = 0;
+
+  TIMER3_SetupPeriod(10);  // 10ms period
+
   while(1)
   {
+    // Run Tasks at Different Rates
 
+    // Read DHT11 every 1 seconds
+    if(dht_count++ >= DHT11_READ_TICKS)
+    {
+      Task_DHT11_Read();
+      dht_count = 0;
+    }
+
+    // Read MPU6050 every 50ms
+    if(mpu_count++ >= MPU_READ_TICKS)
+    {
+      Task_MPU6050_Read();
+      mpu_count = 0;
+    }
+
+    // Update LCD every 100ms
+    if(lcd_count++ >= LCD_UPDATE_TICKS)
+    {
+      Task_LCD_Update();
+      lcd_count = 0;
+    }
+
+    TIMER3_WaitPeriod(); // Heart Beat time check
   }
 }
