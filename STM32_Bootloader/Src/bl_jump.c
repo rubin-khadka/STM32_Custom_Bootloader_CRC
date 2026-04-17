@@ -5,7 +5,7 @@
  *      Author: Rubin Khadka
  */
 
-#include "main.h"
+#include "stm32f103xb.h"
 #include "flash_layout.h"
 #include "bl_jump.h"
 #include "app_header.h"
