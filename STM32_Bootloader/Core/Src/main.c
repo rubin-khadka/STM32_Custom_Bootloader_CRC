@@ -92,19 +92,36 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   HAL_Delay(100);
-  HAL_UART_Transmit(&huart1, (uint8_t*) "Bootloader Working\r\n", 20, 100);
+  HAL_UART_Transmit(&huart1, (uint8_t*) "Bootloader Started\r\n", 21, 100);
 
-  if(Bootloader_Is_App_Valid() != 0)
+  BootloaderError_t err = Bootloader_Is_App_Valid();
+
+  switch (err)
   {
-    HAL_UART_Transmit(&huart1, (uint8_t*) "Failed to jump\r\n", 18, 100);
-    while(1)
-    {
-      HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_4);
-      HAL_Delay(100);
-    }
+    case SUCCESS:
+      HAL_UART_Transmit(&huart1, (uint8_t*) "App Valid - Jumping...\r\n", 25, 100);
+      HAL_Delay(10);  // Let UART finish transmitting
+      Jump_To_Application();
+      break;
+
+    case MAGIC_ERROR:
+      HAL_UART_Transmit(&huart1, (uint8_t*) "Magic Error\r\n", 13, 100);
+      break;
+
+    case CRC_ERROR:
+      HAL_UART_Transmit(&huart1, (uint8_t*) "CRC Error\r\n", 11, 100);
+      break;
+
+    case RESET_ERROR:
+      HAL_UART_Transmit(&huart1, (uint8_t*) "Reset Error\r\n", 13, 100);
+      break;
+
+    case SIZE_ERROR:
+      HAL_UART_Transmit(&huart1, (uint8_t*) "Size Error\r\n", 12, 100);
+      break;
   }
 
-  Jump_To_Application();
+  HAL_UART_Transmit(&huart1, (uint8_t*) "Staying in Bootloader\r\n", 24, 100);
 
   /* USER CODE END 2 */
 
