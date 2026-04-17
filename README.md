@@ -1,5 +1,7 @@
 # STM32_Custom_Bootloader_CRC
 
+<img width="408" height="637" alt="project_flowchart" src="https://github.com/user-attachments/assets/4f4b6684-b40d-48e1-bc0c-1494eb9748ae" />
+
 ## Video Demonstrations
 
 ### Hardware Demo
