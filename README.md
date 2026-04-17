@@ -52,6 +52,20 @@ This demo shows how to flash both the bootloader and application using STM32Cube
     - Bootloader → 0x08000000
     - Application → 0x08002400
 
+## Pin Configuration
+
+| Component	| STM32 Pin	| Notes |
+|-----------|-----------|-------|
+| LED | PA4 | Active-high indicator |
+| Button | PA0 | Pull-down, active-high |
+| DHT11 | PB0 | Single-wire data |
+| LCD (I2C) | PB10 (SCL), PB11 (SDA) | With PCF8574 backpack |
+| MPU6050 | PB10 (SCL), PB11 (SDA) | I2C address: 0x69 |
+| DS3231 | PB10 (SCL), PB11 (SDA) | I2C address: 0x68 |
+| USART1 (Debug) | PA9 (TX), PA10 (RX) | 115200 baud, 8N1 |
+
+> **Note:** Multiple I2C devices (LCD, MPU6050, DS3231) share the same I2C bus (PB10/PB11) with different addresses.
+
 ## Memory Layout
 
 The STM32 flash memory is partitioned to separate the bootloader from the application firmware:
@@ -88,30 +102,6 @@ Flash Memory Map (STM32F103C8 - 64KB total)
 - Application header at 0x08002000 stores CRC and metadata
 - Application code starts at 0x08002400 with custom vector table remapping
 - Bootloader verifies CRC from header before jumping to the application
-
-## Pin Configuration
-
-| Component	| STM32 Pin	| Notes |
-|-----------|-----------|-------|
-| LED | PA4 | Active-high indicator |
-| Button | PA0 | Pull-down, active-high |
-| DHT11 | PB0 | Single-wire data |
-| LCD (I2C) | PB10 (SCL), PB11 (SDA) | With PCF8574 backpack |
-| MPU6050 | PB10 (SCL), PB11 (SDA) | I2C address: 0x69 |
-| DS3231 | PB10 (SCL), PB11 (SDA) | I2C address: 0x68 |
-| USART1 (Debug) | PA9 (TX), PA10 (RX) | 115200 baud, 8N1 |
-
-> **Note:** Multiple I2C devices (LCD, MPU6050, DS3231) share the same I2C bus (PB10/PB11) with different addresses.
-
-| Component | STM32 Pin |
-|-----------|-----------|
-| LED | PA4 |
-| Button | PA0 |
-| DHT11 | PB0 |
-| LCD (I2C) | PB10 (SCL), PB11 (SDA) |
-| MPU6050 | PB10, PB11 | 
-| DS3231 | PB10, PB11 |
-| USART1 (debug) | PA9 (TX), PA10(RX) |
 
 ## CRC Calculation & Verification
 The bootloader uses a 32-bit CRC (Cyclic Redundancy Check) to ensure the integrity of the application firmware before executing it.
