@@ -7,6 +7,7 @@
 
 #include "stm32f103xb.h"
 #include "flash_layout.h"
+#include "app_header.h"
 #include "dwt.h"
 #include "timer2.h"
 #include "timer3.h"
@@ -23,6 +24,15 @@
 #define DHT11_READ_TICKS      100
 #define MPU_READ_TICKS        5
 #define LCD_UPDATE_TICKS      10
+
+__attribute__((section(".header"))) const app_header_t app_header =
+{
+  .ota_flag = 0,
+  .magic    = 0xABCDEFAB,
+  .size     = 0,
+  .crc      = 0,
+  .version  = 0
+};
 
 int main(void)
 {
