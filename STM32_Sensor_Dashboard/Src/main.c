@@ -19,6 +19,7 @@
 #include "ds3231.h"
 #include "mpu6050.h"
 #include "tasks.h"
+#include "gpio.h"
 #include <stdint.h>
 
 #define DHT11_READ_TICKS      100
@@ -29,14 +30,13 @@ __attribute__((section(".header"))) const app_header_t app_header =
 {
   .ota_flag = 0,
   .magic    = 0xABCDEFAB,
-  .size     = 12040,
-  .crc      = 0x741C510A,
+  .size     = 12128,
+  .crc      = 0xB54CD161,
   .version  = 0
 };
 
 int main(void)
 {
-
   SCB->VTOR = APP_START_ADDR;
   __enable_irq();
 
@@ -47,6 +47,7 @@ int main(void)
   USART1_Init();
   I2C2_Init();
   LCD_Init();
+  LED_Init();
 
   USART1_SendString("Jumped Inside Application\r\n");
 
@@ -59,6 +60,8 @@ int main(void)
   LCD_SendString("STM32 PROJECT");
   LCD_SetCursor(1, 0);
   LCD_SendString("INITIALIZING...");
+
+  LED_OFF();
 
   // Initialize sensors
   DS3231_Init();
