@@ -14,4 +14,6 @@
 
 #define APP_START_ADDR        0x08004400  // 47KB
 
+#define APP_MAX_SIZE          47*1024
+
 #endif /* INC_FLASH_LAYOUT_H_ */

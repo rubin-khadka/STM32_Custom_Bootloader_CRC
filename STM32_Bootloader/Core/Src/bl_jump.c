@@ -7,7 +7,9 @@
 
 #include "main.h"
 #include "flash_layout.h"
+#include "bl_jump.h"
 #include "app_header.h"
+#include "crc32.h"
 
 #define APP_MAGIC     0xABCDEFAB
 
@@ -48,12 +50,22 @@ int Bootloader_Is_App_Valid(void)
 
   /* 1. Magic */
   if(app_hdr->magic != APP_MAGIC)
-    return 1;
+    return MAGIC_ERROR;
 
   /* 2. Reset handler sanity */
   uint32_t reset_handler = *(uint32_t*) (APP_START_ADDR + 4);
   if((reset_handler & 0xFF000000) != 0x08000000)
-    return 2;
+    return RESET_ERROR;
 
-  return 0;   // VALID
+  /* 3. Size sanity */
+  if(app_hdr->size == 0 || app_hdr->size > APP_MAX_SIZE)
+    return SIZE_ERROR;
+
+  /* 4. CRC check */
+  uint32_t calc_crc = crc32((const uint8_t*) APP_START_ADDR, app_hdr->size);
+
+  if(calc_crc != app_hdr->crc)
+    return CRC_ERROR;
+
+  return BOOT_SUCCESS;
 }
